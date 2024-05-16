@@ -1,4 +1,3 @@
-# Your import statements and NLTK downloads here...
 import gtts
 import os
 
@@ -6,74 +5,62 @@ import speech_recognition as sr
 import webbrowser as wb
 import pygame
 import nltk
-from nltk.corpus import stopwords as s
-from nltk.stem import WordNetLemmatizer
-import datetime
-import threading
-
-# Download NLTK resources if not already downloaded
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('maxent_ne_chunker')
 nltk.download('words')
+from nltk.corpus import stopwords as s
+from nltk.stem import WordNetLemmatizer
+import datetime
+import threading
 
-pygame.init()   # Initialize Pygame
-
-# Set up the Pygame window
-WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 600
-window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-pygame.display.set_caption("J.A.R.V.I.S. Arc Reactor Animation")
-
-# Load the Arc Reactor animation frames
-arc_reactor_frames = []  
-frame_directory = "/home/sudhanshu/Downloads/J.A.R.V.I.S"
-frame_count = 135 
-
-for i in range(frame_count):
-    frame_path = os.path.join(frame_directory, f"frame_{i:03d}_delay-0.07s.jpg")
-    frame = pygame.image.load(frame_path).convert()  
-    arc_reactor_frames.append(frame)
-
-# Main loop
-running = True
-current_frame_index = 0
-clock = pygame.time.Clock()
-
-# Lock for thread synchronization
-lock = threading.Lock()
+# creating take_commands() import randomfunction which
+# can take some audio, Recognize and return
+# if there are not any errors
 
 def take_commands():
     stopwords = set(s.words('english'))
  
-    r = sr.Recognizer()    
-    r.punctuation = False  
+    r = sr.Recognizer()    # initializing speech_recognition
+    r.punctuation = False  # Set the punctuation configuration
     
+    # opening physical microphone of computer
     with sr.Microphone() as source:
+        
         print('Listening')
-        r.adjust_for_ambient_noise(source, duration=0.5)  
-        r.pause_threshold = 0.5
+        # adjusting for ambient noise
+        r.adjust_for_ambient_noise(source, duration=1)# storing audio/sound to audio variable
+        r.pause_threshold = 0.7
+        
+        
+        
         print("Say something...")
-        audio = r.listen(source, phrase_time_limit=5)  # Reduced time for faster response
+        # storing audio/sound to audio variable
+        audio = r.listen(source, phrase_time_limit=70)  # wait for 30 seconds
         try:
             print("Recognizing")
+            # Recognizing audio using google api
             Query = r.recognize_google(audio)
             print("the query is printed='", Query, "'")
         except Exception as e:
             print(e)
             print("Say that again sir")
+            
+            # returning none if there are errors
             Query = "None"
             keywords = []
             return Query, keywords
-
+    # Preprocessing the user's input
+    
     tokens = nltk.word_tokenize(Query)
     tokens = [token for token in tokens if token.lower() not in stopwords]
     lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(token) for token in tokens]
     pos_tags = nltk.pos_tag(tokens)
     named_entities = nltk.ne_chunk(pos_tags)
+    # Extracting keywords from the user's input
     keywords = []
     for tag in pos_tags:
         if tag[1] in ['NNP', 'NNPS', 'NNS', 'NN']:
@@ -87,70 +74,70 @@ def take_commands():
                 else:
                     keywords.append(leaf)
     
-    print("Keywords:")
-    for keyword in keywords:
-        print(keyword)
+   
 
     return Query, keywords 
 
+    
+
+# creating Speak() function to giving Speaking power
+# to our voice assistant 
 def speak(audio):
-    tts = gtts.gTTS(text=audio, lang='en', slow=False)  # Simplified options
+    # initializing gtts module
+    tts = gtts.gTTS(text=audio,tld='com', lang='en-gb', slow =False)
     tts.save('temp.mp3')
     os.system('mpg321 temp.mp3')
 
+        
+
 def time():
     Time = datetime.datetime.now().strftime("%I:%M:%S")
-    speak("the current time is " + Time)
-    print("The current time is:", Time)
+    speak("the current time is")
+    speak(Time)
+    print("The current time is H:M:S", Time)
 
 def date():
-    now = datetime.datetime.now()
-    speak("the current date is " + now.strftime("%d %B %Y"))
-    print("The current date is:", now.strftime("%d %B %Y"))
+    day = int(datetime.datetime.now().day)
+    month = int(datetime.datetime.now().month)
+    year = int(datetime.datetime.now().year)
+    speak("the current date is")
+    speak(str(day))
+    speak(str(month))
+    speak(str(year))
+    print("The current date is " + str(day) + "/" + str(month) + "/" + str(year))
+
+
+
 
 def wishme():
     print("Welcome back sir...!")
     speak("Welcome back sir...")
     
     hour = datetime.datetime.now().hour
-    if 4 <= hour < 12:
+    if hour >= 4 and hour < 12:
         speak("Good Morning ")
         print("Good Morning !!")
-    elif 12 <= hour < 16:
+    
+    elif hour >= 12 and hour < 16:
         speak("Good Afternoon ")
         print("Good Afternoon ")
-    elif 16 <= hour < 24:
+    elif hour >= 16 and hour < 24:
         speak("Good Evening ")
         print("Good Evening ")
     else:
         speak("Its Night")
         speak("Friday at your service Sir...")
 
-if __name__ == '__main__':
-    wishme()
     
 
-    # Start the take_commands() function in a separate thread
-    take_commands_thread = threading.Thread(target=take_commands)
-    take_commands_thread.start()
 
-    while running:
+# Driver Code
+if __name__ == '__main__':
+    # using while loop to communicate infinitely
+    
+    wishme()
+    while True:
         command, keywords = take_commands()
-        
-        lock.acquire()  # Acquire lock before accessing shared resources
-        window.fill((0, 0, 0))
-        current_frame = arc_reactor_frames[current_frame_index]
-        window.blit(current_frame, (0, 0))
-        pygame.display.update()
-        current_frame_index = (current_frame_index + 1) % len(arc_reactor_frames)
-        lock.release()  # Release lock after updating the display
-
-        clock.tick(60)  # Adjust frame rate to 60 frames per second
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        
         if "time" in command:
             time()
             
@@ -172,6 +159,14 @@ if __name__ == '__main__':
         elif "terminal" in keywords:
             os.system("gnome-terminal &")
             speak("terminal is opened")
-
-    pygame.quit()
+        elif "Hello Friday" in keywords:
+            speak("Hello Sir, how can I help you?")
     
+        
+        
+        
+
+
+
+        
+        
