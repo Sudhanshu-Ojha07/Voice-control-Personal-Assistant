@@ -1,6 +1,6 @@
 - 👋 Hi, I’m @Sudhanshu-Ojha
-- 👀 I’m interested in Artificial Intelligence and Machine learning 
-- 🌱 I’m currently learning Machine Learning and Generative AI
+- 👀 My area of intrest is Artificial Intelligence and Machine learning.
+- 🌱 I’m currently learning Machine Learning and Generative AI.
 
 - 📫 How to reach me - You can mail me on " sudhanshuojha01643@gmail.com "
 - 😄 Pronouns: ...
