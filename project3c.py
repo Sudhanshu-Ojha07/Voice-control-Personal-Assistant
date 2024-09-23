@@ -3,7 +3,7 @@ import os
 
 import speech_recognition as sr
 import webbrowser as wb
-import pygame
+
 import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -14,7 +14,9 @@ nltk.download('words')
 from nltk.corpus import stopwords as s
 from nltk.stem import WordNetLemmatizer
 import datetime
-import threading
+import psutil  # For battery status
+import requests  # For internet connection check
+import time
 
 # creating take_commands() import randomfunction which
 # can take some audio, Recognize and return
@@ -87,7 +89,6 @@ def speak(audio):
     tts = gtts.gTTS(text=audio,tld='com', lang='en-gb', slow =False)
     tts.save('temp.mp3')
     os.system('mpg321 temp.mp3')
-
         
 
 def time():
@@ -105,13 +106,41 @@ def date():
     speak(str(month))
     speak(str(year))
     print("The current date is " + str(day) + "/" + str(month) + "/" + str(year))
+def check_battery():
+    battery = psutil.sensors_battery()
+    percent = battery.percent
+    if battery.power_plugged:
+        status = "charging"
+    else:
+        status = "not charging"
+    return percent, status
 
+def check_internet():
+    try:
+        response = requests.get("http://www.google.com", timeout=5)
+        if response.status_code == 200:
+            return True
+    except requests.ConnectionError:
+        return False
+    return False
+def power():
+    percent, status = check_battery()
+    speak(f"Your power is at {percent} percent and it is currently {status}.")
+    print(f"Power status: {percent}% ({status})")
 
+def internet():
+    if check_internet():
+        speak("Internet connection is good, boss.")
+        print("Internet connection is good.")
+    else:
+        speak("No internet connection detected.")
+        print("No internet connection.")
 
-
+    
+   
 def wishme():
-    print("Welcome back sir...!")
-    speak("Welcome back sir...")
+    print("Welcome back, sir. Congratulations for the new update ...!")
+    speak("Welcome back, sir. Congratulations for the new update...")
     
     hour = datetime.datetime.now().hour
     if hour >= 4 and hour < 12:
@@ -141,13 +170,16 @@ if __name__ == '__main__':
         if "time" in command:
             time()
             
-        elif "YouTube" in command:
-            wb.open("youtube.com") 
-
+        elif "YouTube" in keywords:
+            wb.open("https://www.youtube.com/")
+            speak("Youtube is opened sir")
+            speak("Have fun!")
+        elif "power" in keywords:
+            power()  
         elif "date" in keywords:
             date()
-        elif "exit" in keywords:
-            speak("Sure sir! as your wish, bai")
+        elif "offline" in keywords:
+            speak("Sure sir! ,Test complete. Preparing to power down and begin diagnostics")
             break
         elif "insta" in keywords:
             speak("sudhanshu.ojha.404")
@@ -159,9 +191,17 @@ if __name__ == '__main__':
         elif "terminal" in keywords:
             os.system("gnome-terminal &")
             speak("terminal is opened")
-        elif "Hello Friday" in keywords:
-            speak("Hello Sir, how can I help you?")
+        elif "online" in keywords:
+            speak("At your service sir, How can I help you")
+
     
+            
+
+            
+
+            
+        
+
         
         
         
