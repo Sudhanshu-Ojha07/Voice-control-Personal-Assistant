@@ -181,8 +181,9 @@ if __name__ == '__main__':
         elif "offline" in keywords:
             speak("Sure sir! ,Test complete. Preparing to power down and begin diagnostics")
             break
-        elif "insta" in keywords:
-            speak("sudhanshu.ojha.404")
+        elif "Instagram" or "insta"
+        in keywords:
+            speak("Place your instagram ID")
         elif "name" in keywords:
             speak("I am Friday !, 'I am a virtual assistant' ")
         elif "code" in keywords:
