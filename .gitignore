@@ -10,7 +10,7 @@ venv/
 voice/
 
 # Secrets
-config.py
+# under this Secret section, add any files that may contain sensitive information like your API keys, passwords, or other credentials, in this case config.py
 
 # Audio temp files
 temp.mp3
