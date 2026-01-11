@@ -109,6 +109,8 @@ Cleaned LLM responses before TTS
 
 Installation Guide:
     1.git clone https://github.com/your-username/Voice-control-Personal-Assistant.git
+
+    
     2.cd Voice-control-Personal-Assistant
     3.pip install -r requirements.txt
 
