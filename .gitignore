@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+voice/
+
+# Secrets
+config.py
+
+# Audio temp files
+temp.mp3
+fast_audio.mp3
+mpg321 fast_audio.mp3
+
+# OS
+.DS_Store
+
+# VS Code
+.vscode/

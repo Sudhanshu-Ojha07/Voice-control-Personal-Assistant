@@ -1,0 +1,6 @@
+gTTS
+SpeechRecognition
+nltk
+psutil
+requests
+PyAudio
