@@ -108,6 +108,7 @@ Reduced microphone latency for quicker recognition
 Cleaned LLM responses before TTS
 
 Installation Guide:
+
     1.git clone https://github.com/your-username/Voice-control-Personal-Assistant.git
 
     
